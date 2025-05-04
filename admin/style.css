@@ -1,0 +1,213 @@
+
+:root {
+    --sidebar-width: 200px; /* Reduced sidebar width */
+}
+
+body {
+    font-size: 0.875rem; /* Smaller base font size */
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #2c3e50;
+    color: white;
+    padding-top: 10px; /* Reduced padding */
+    z-index: 1000;
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.8);
+    padding: 8px 12px; /* Reduced padding */
+    margin: 2px 8px; /* Reduced margin */
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 0.85rem; /* Smaller font */
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 6px;
+}
+
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 12px; /* Reduced padding */
+}
+
+.stat-card {
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+    background: white;
+    height: 100%;
+    padding: 12px !important; /* Smaller padding */
+}
+
+
+.stat-icon {
+    font-size: 1.8rem; /* Smaller icon */
+    opacity: 0.8;
+    color: #2c3e50;
+}
+
+.card-header {
+    padding: 0.5rem 0.75rem !important; /* Smaller header padding */
+}
+
+.card-body {
+    padding: 0.75rem !important; /* Smaller body padding */
+}
+
+.table {
+    font-size: 0.8rem; /* Smaller table text */
+    margin-bottom: 0;
+}
+
+.table th, .table td {
+    padding: 0.4rem 0.5rem; /* Compact cell padding */
+    vertical-align: middle;
+}
+
+.admin-header {
+    background: white;
+    padding: 8px 12px; /* Reduced padding */
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    margin-bottom: 12px;
+}
+
+/* More compact badges */
+.badge {
+    padding: 0.25em 0.5em;
+    font-size: 0.75em;
+}
+
+/* Compact buttons */
+.btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 0.9rem;
+}
+
+.text-muted {
+    font-size: 0.75rem;
+}
+
+/* Compact spacing between rows */
+.row {
+    margin-bottom: 12px;
+}
+
+.g-4 {
+    --bs-gutter-y: 0.75rem;
+    --bs-gutter-x: 0.75rem;
+}
+
+/* Compact alert */
+.alert {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Adjustment for modal */
+.modal-body {
+    padding: 0.75rem;
+}
+
+.modal-header, .modal-footer {
+    padding: 0.5rem 0.75rem;
+}
+
+/* Add to the existing <style> section */
+.stat-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Specific colors for each stat card */
+.stat-card.checkins {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+}
+
+.stat-card.bookings {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white;
+}
+
+.stat-card.rooms {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+.stat-card.revenue {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: white;
+}
+
+.stat-card .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.stat-card .stat-icon {
+    color: rgba(255, 255, 255, 0.9);
+}
+.notification {
+position: fixed;
+top: 20px;
+right: 20px;
+padding: 15px 25px;
+border-radius: 4px;
+color: #fff;
+font-size: 14px;
+z-index: 9999;
+transform: translateX(150%);
+transition: transform 0.3s ease-in-out;
+box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+}
+
+.notification.show {
+transform: translateX(0);
+}
+
+.notification.success {
+background-color: #28a745;
+}
+
+.notification.error {
+background-color: #dc3545;
+}
+.card-body .row {
+    min-height: 400px;
+}
+
+
+#customerChart{
+    height: 350px !important;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+}
