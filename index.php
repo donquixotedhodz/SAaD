@@ -310,7 +310,7 @@ footer a:hover {
             <div class="row">
                 <div class="col-12 text-center text-white">
                     <h1 class="display-3 fw-bold">Welcome to Richard's Hotel</h1>
-                    <p class="lead mb-4">Experience luxury and comfort at its finest</p>
+                    <p class="lead mb-4">Experienced one of a lifetime</p>
                     
                 </div>
             </div>
