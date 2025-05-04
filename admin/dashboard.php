@@ -406,7 +406,7 @@ $customer_data = $customer_stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Sidebar Navigation -->
     <nav class="sidebar">
         <div class="text-center mb-2">
-        <img src="../images/logo.png" class="mb-2" style="width: 80px; height: auto;">
+        <img src="../images/logo1.png" class="mb-2" style="width: 80px; height: auto;">
             <h5 class="mb-1">Richard's Hotel</h5>
             <small>Admin Dashboard</small>
         </div>
