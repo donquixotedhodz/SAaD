@@ -120,6 +120,7 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- DatePicker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
         :root {
             --sidebar-width: 200px;
@@ -324,17 +325,18 @@ try {
 <body class="bg-light">
     <!-- Sidebar Navigation -->
     <nav class="sidebar">
-        <div class="text-center mb-2">
-        <img src="../images/logo.png" class="mb-2" style="width: 80px; height: auto;">
-            <h5 class="mb-1">Richard's Hotel</h5>
-            <small>Admin Dashboard</small>
-        </div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link active" href="dashboard.php">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
-            </li>
+    <div class="text-center mb-2">
+        <!-- Fixed image path -->
+        <img src="../images/logo1.png" class="mb-2" style="width: 80px; height: auto;" alt="Hotel Logo">
+        <h5 class="mb-1">Richard's Hotel</h5>
+        <small>Admin Dashboard</small>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" href="dashboard.php">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </li>
             <li class="nav-item">
                 <a class="nav-link" href="customer_report.php">
                     <i class="fas fa-users"></i> Customers
@@ -352,7 +354,7 @@ try {
                 </a>
             </li>
         </ul>
-    </nav>
+</nav>
 
     <!-- Main Content -->
     <div class="main-content">

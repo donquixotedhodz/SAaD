@@ -405,11 +405,12 @@ $customer_data = $customer_stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-light">
     <!-- Sidebar Navigation -->
     <nav class="sidebar">
-        <div class="text-center mb-2">
-        <img src="../images/logo1.png" class="mb-2" style="width: 80px; height: auto;">
-            <h5 class="mb-1">Richard's Hotel</h5>
-            <small>Admin Dashboard</small>
-        </div>
+    <div class="text-center mb-2">
+        <!-- Update the image path by adding one more ../ to go up one more directory level -->
+        <img src="../images/logo1.png" class="mb-2" style="width: 80px; height: auto;" alt="Hotel Logo">
+        <h5 class="mb-1">Richard's Hotel</h5>
+        <small>Admin Dashboard</small>
+    </div>
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link active" href="dashboard.php">

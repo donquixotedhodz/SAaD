@@ -1,6 +1,5 @@
 <?php
 // Add this new file: get_analytics.php
-<?php
 // filepath: c:\wamp64\www\richardshotelMS\admin\get_analytics.php
 require_once '../includes/session.php';
 require_once '../config/database.php';
