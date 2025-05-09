@@ -247,11 +247,12 @@
         function populateRoomTypeSelect(data) {
             roomTypeSelect.innerHTML = '<option value="">Select a room type</option>';
             data.forEach(room => {
+                const price = parseFloat(room.price);
                 roomTypeSelect.innerHTML += `
                     <option value="${room.id}" 
                             data-duration="${room.duration_hours}"
-                            data-rate="${room.price}">
-                        ${room.name} - ₱${room.price.toLocaleString()}
+                            data-price="${price}">
+                        ${room.name} - ₱${price.toLocaleString()}
                     </option>`;
             });
         }
@@ -331,31 +332,23 @@
                 document.getElementById('check_out_date').value = checkOut.toISOString().split('T')[0];
                 document.getElementById('check_out_time').value = checkOut.toTimeString().slice(0, 5);
 
-                // Calculate and set total amount
-                const hours = selectedRoom.duration_hours;
-                const rate = selectedRoom.price;
-                const total = rate;
+                // Get price from the selected room type
+                const price = parseFloat(selectedRoom.price);
                 
-                // Add hidden input for total amount if it doesn't exist
-                let totalInput = document.getElementById('total_amount');
-                if (!totalInput) {
-                    totalInput = document.createElement('input');
-                    totalInput.type = 'hidden';
-                    totalInput.id = 'total_amount';
-                    totalInput.name = 'total_amount';
-                    document.getElementById('bookingForm').appendChild(totalInput);
-                }
-                totalInput.value = total;
+                // Ensure price is a valid number
+                if (!isNaN(price)) {
+                    // Update hidden input for total amount
+                    document.getElementById('total_amount').value = price.toString();
 
-                // Display total amount to user (optional)
-                let totalDisplay = document.getElementById('total_display');
-                if (!totalDisplay) {
-                    totalDisplay = document.createElement('div');
-                    totalDisplay.id = 'total_display';
-                    totalDisplay.className = 'alert alert-info mt-3';
-                    document.getElementById('bookingForm').appendChild(totalDisplay);
+                    // Update total amount display
+                    document.getElementById('total_display').innerHTML = 
+                        `Total Amount: ₱${price.toLocaleString('en-PH', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}`;
+                        
+                    console.log('Updated total amount:', price); // Debug log
                 }
-                totalDisplay.innerHTML = `Total Amount: ₱${total.toLocaleString()}`;
             }
         }
 
@@ -379,14 +372,29 @@
         bookingForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Validate total amount
+            const totalAmount = parseFloat(document.getElementById('total_amount').value);
+            if (isNaN(totalAmount) || totalAmount <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Amount',
+                    text: 'Please select a valid room type and dates',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+
             try {
                 // Show loading state
                 const submitButton = this.querySelector('button[type="submit"]');
                 submitButton.disabled = true;
                 submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
 
-                // Validate form data
+                // Create FormData and explicitly set the total_amount
                 const formData = new FormData(this);
+                formData.set('total_amount', totalAmount.toString());
+
+                // Validate form data
                 const checkIn = new Date(`${formData.get('check_in_date')}T${formData.get('check_in_time')}`);
                 const now = new Date();
 

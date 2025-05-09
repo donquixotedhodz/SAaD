@@ -205,40 +205,37 @@ try {
     $weekly_revenue = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Get recent bookings with customer and room details
-    $bookingsQuery = "
-    SELECT 
-        b.*,
-        c.first_name,
-        c.last_name,
-        c.email,
-        r.room_number,
-        rt.name as room_type,
-        rt.rate as room_rate,
-        DATEDIFF(b.check_out, b.check_in) as nights_stayed,
-        CASE 
-            WHEN b.total_amount > 0 THEN b.total_amount
-            WHEN b.total_amount IS NULL OR b.total_amount = 0 THEN rt.rate * DATEDIFF(b.check_out, b.check_in)
-            ELSE rt.rate * DATEDIFF(b.check_out, b.check_in)
-        END as total_amount,
-        a1.username as confirmed_by_name,
-        a2.username as cancelled_by_name
-    FROM bookings b
-    LEFT JOIN customers c ON b.customer_id = c.id
-    LEFT JOIN rooms r ON b.room_id = r.id
-    LEFT JOIN room_types rt ON r.room_type_id = rt.id
-    LEFT JOIN admin a1 ON b.confirmed_by = a1.id
-    LEFT JOIN admin a2 ON b.cancelled_by = a2.id
-    WHERE b.status NOT IN ('archived')
-    ORDER BY 
-        CASE 
-            WHEN b.status = 'pending' THEN 1
-            WHEN b.status = 'confirmed' THEN 2
-            WHEN b.status = 'checked_in' THEN 3
-            WHEN b.status = 'checked_out' THEN 4
-            WHEN b.status = 'cancelled' THEN 5
-        END,
-        b.created_at DESC
-    LIMIT 10
+   // Replace the existing bookings query in dashboard.php
+$bookingsQuery = "
+SELECT 
+    b.*,
+    c.first_name,
+    c.last_name,
+    c.email,
+    r.room_number,
+    rt.name as room_type,
+    rt.rate as room_rate,
+    DATEDIFF(b.check_out, b.check_in) as nights_stayed,
+    COALESCE(NULLIF(b.total_amount, 0), price) as total_amount,
+    a1.username as confirmed_by_name,
+    a2.username as cancelled_by_name
+FROM bookings b
+LEFT JOIN customers c ON b.customer_id = c.id
+LEFT JOIN rooms r ON b.room_id = r.id
+LEFT JOIN room_types rt ON r.room_type_id = rt.id
+LEFT JOIN admin a1 ON b.confirmed_by = a1.id
+LEFT JOIN admin a2 ON b.cancelled_by = a2.id
+WHERE b.status NOT IN ('archived')
+ORDER BY 
+    CASE 
+        WHEN b.status = 'pending' THEN 1
+        WHEN b.status = 'confirmed' THEN 2
+        WHEN b.status = 'checked_in' THEN 3
+        WHEN b.status = 'checked_out' THEN 4
+        WHEN b.status = 'cancelled' THEN 5
+    END,
+    b.created_at ASC
+LIMIT 10
 ";
     $stmt = $pdo->prepare($bookingsQuery);
     $stmt->execute();
@@ -378,14 +375,17 @@ try {
 }
 
 // Get customer count per month for the last 6 months
-$customer_stmt = $pdo->prepare("SELECT 
-    DATE_FORMAT(created_at, '%Y-%m') as month,
-    DATE_FORMAT(created_at, '%b %Y') as month_label,
-    COUNT(DISTINCT customer_id) as customer_count
-FROM bookings 
-WHERE created_at >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
-GROUP BY DATE_FORMAT(created_at, '%Y-%m'), DATE_FORMAT(created_at, '%b %Y')
-ORDER BY month ASC");
+$customer_stmt = $pdo->prepare("
+    SELECT 
+        DATE_FORMAT(check_out, '%Y-%m') as month,
+        DATE_FORMAT(check_out, '%b %Y') as month_label,
+        COUNT(DISTINCT id) as customer_count
+    FROM bookings 
+    WHERE check_out >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
+        AND status IN ('checked_out', 'archived')  -- Only count completed stays
+    GROUP BY DATE_FORMAT(check_out, '%Y-%m'), DATE_FORMAT(check_out, '%b %Y')
+    ORDER BY month ASC
+");
 $customer_stmt->execute();
 $customer_data = $customer_stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -543,6 +543,8 @@ $customer_data = $customer_stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
+
+    <!-- Charts Section -->
 <div class="row mb-3">
     <div class="col-12">
         <div class="card shadow-sm">
@@ -559,7 +561,7 @@ $customer_data = $customer_stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- Sales Overview -->
         
 
-        <!-- Charts Section -->
+    
 
 <!-- Replace or update the Charts Section in your HTML -->
 
@@ -1119,22 +1121,30 @@ async function sendBookingRequest(action, bookingId, reason = '') {
 </script>
 
 <script>
+// Replace the existing chart JavaScript code
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Get customer data from PHP and ensure it's properly encoded
+    // Get customer data from PHP
     const customerData = <?php echo json_encode($customer_data, JSON_NUMERIC_CHECK); ?>;
     
-    // Create arrays to store months and corresponding values
-    
-    const labels = [ 'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'];
-    const values = [];
-    
-    // Process the customer data to extract months and counts
+    // Function to get months in order
+    function getMonthsInOrder() {
+        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    }
+
+    // Initialize data for all months with zero values
+    const allMonths = getMonthsInOrder();
+    const defaultData = allMonths.map(month => ({
+        month_label: month,
+        customer_count: 0
+    }));
+
+    // Update counts for months that have data
     customerData.forEach(data => {
-        // Extract month from the month_label (assuming format "MMM YYYY")
-        const monthName = data.month_label.split(' ')[0];
-        labels.push(monthName);
-        values.push(data.customer_count);
+        const monthIndex = allMonths.indexOf(data.month_label.split(' ')[0]);
+        if (monthIndex !== -1) {
+            defaultData[monthIndex].customer_count = data.customer_count;
+        }
     });
 
     // Create the chart
@@ -1142,37 +1152,57 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
-            datasets: [{
-                label: 'Number of Customers',
-                data: values,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
+            labels: defaultData.map(data => data.month_label),
+            datasets: [
+                {
+                    label: 'Monthly',
+                    data: defaultData.map(data => data.customer_count),
+                    backgroundColor: 'rgb(0, 123, 255)',
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7
+                },
+            ]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    align: 'center',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                },
+                title: {
+                    display: false
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        drawBorder: false,
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
                     ticks: {
-                        stepSize: 1,
-                        precision: 0
-                    }
-                }
-            },
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Monthly Customer Count',
-                    font: {
-                        size: 16,
-                        weight: 'bold'
+                        stepSize: 5,
+                        font: {
+                            size: 11
+                        }
                     }
                 },
-                legend: {
-                    position: 'bottom'
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
                 }
             }
         }

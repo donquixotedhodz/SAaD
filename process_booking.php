@@ -84,3 +84,5 @@ try {
         'message' => $e->getMessage()
     ]);
 }
+
+$total_amount = room_rate * (duration_hours / 24);
