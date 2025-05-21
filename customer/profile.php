@@ -86,17 +86,65 @@ function getStatusBadgeClass($status) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .sidebar {
-            background-color: #f8f9fa;
+            background: #2c3e50;
             min-height: 100vh;
         }
         .nav-link {
-            color: #333;
+            color:  rgba(255,255,255,0.8);
         }
         .nav-link:hover {
             color: #0d6efd;
         }
         .active-booking {
             background-color: #e8f4ff;
+        }
+        h5 {
+            color: #fff;
+        }
+        .table {
+            font-size: 0.9rem;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 1rem;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link {
+            color: #495057;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+        }
+        .nav-tabs .nav-link.active {
+            border-bottom: 2px solid #0d6efd;
+            color: #0d6efd;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 0.75em;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+        .booking-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .booking-info-item {
+            flex: 1;
+            min-width: 200px;
         }
     </style>
 </head>
@@ -107,7 +155,7 @@ function getStatusBadgeClass($status) {
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
-                        <img src="../images/logo.png" alt="Hotel Logo" class="img-fluid mb-3" style="max-height: 60px;">
+                        <img src="../images/logo1.png" alt="Hotel Logo" class="img-fluid mb-3" style="max-height: 60px;">
                         <h5><?php echo htmlspecialchars($customer['first_name'] . ' ' . $customer['last_name']); ?></h5>
                     </div>
                     <ul class="nav flex-column">
@@ -132,21 +180,31 @@ function getStatusBadgeClass($status) {
 
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">My Profile</h1>
-                </div>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h5">
+    <i class="fas fa-tachometer-alt me-2"></i> Profile Dashboard
+    </h1>
+</div>
+
 
                 <!-- Profile Information -->
                 <div class="card mb-4">
-                    <div class="card-header">
-                        Personal Information
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0" style="color: black;">Personal Information</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Name:</strong> <?php echo htmlspecialchars($customer['first_name'] . ' ' . $customer['last_name']); ?></p>
-                                <p><strong>Email:</strong> <?php echo htmlspecialchars($customer['email']); ?></p>
-                                <p><strong>Phone:</strong> <?php echo htmlspecialchars($customer['phone']); ?></p>
+                        <div class="booking-info">
+                            <div class="booking-info-item">
+                                <p class="mb-1"><i class="fas fa-user me-2"></i><strong>Name</strong></p>
+                                <p class="text-muted"><?php echo htmlspecialchars($customer['first_name'] . ' ' . $customer['last_name']); ?></p>
+                            </div>
+                            <div class="booking-info-item">
+                                <p class="mb-1"><i class="fas fa-envelope me-2"></i><strong>Email</strong></p>
+                                <p class="text-muted"><?php echo htmlspecialchars($customer['email']); ?></p>
+                            </div>
+                            <div class="booking-info-item">
+                                <p class="mb-1"><i class="fas fa-phone me-2"></i><strong>Phone</strong></p>
+                                <p class="text-muted"><?php echo htmlspecialchars($customer['phone']); ?></p>
                             </div>
                         </div>
                     </div>
@@ -154,24 +212,26 @@ function getStatusBadgeClass($status) {
 
                 <!-- Bookings -->
                 <div class="card">
-                    <div class="card-header">
-                        My Bookings
-                    </div>
-                    <div class="card-body">
-                        <!-- Add tabs for active and archived bookings -->
-                        <ul class="nav nav-tabs mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0" style="color: black;">My Bookings</h5>
+                        <ul class="nav nav-tabs mb-0 border-0">
                             <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#active">Active Bookings</a>
+                                <a class="nav-link active" data-bs-toggle="tab" href="#active">
+                                    <i class="fas fa-clock me-1"></i>Active
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#archived">Archived Bookings</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#archived">
+                                    <i class="fas fa-history me-1"></i>Archived
+                                </a>
                             </li>
                         </ul>
-
+                    </div>
+                    <div class="card-body p-0">
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="active">
                                 <div class="table-responsive">
-                                    <table class="table">
+                                    <table class="table table-hover mb-0">
                                         <thead>
                                             <tr>
                                                 <th>Booking ID</th>
