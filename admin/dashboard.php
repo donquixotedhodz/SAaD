@@ -53,21 +53,33 @@ $today_stats = $today_stmt->fetch(PDO::FETCH_ASSOC);
     $current_month_revenue = $revenue_stmt->fetch(PDO::FETCH_ASSOC);
 
     // Get room availability stats
-    $room_stmt = $pdo->prepare("WITH RoomStatus AS (
-        SELECT r.id,
-               CASE WHEN EXISTS (
-                   SELECT 1 FROM bookings b 
-                   WHERE b.room_id = r.id 
-                   AND b.status IN ('confirmed', 'checked_in')
-                   AND CURRENT_DATE() BETWEEN DATE(b.check_in) AND DATE(b.check_out)
-               ) THEN 'occupied' ELSE 'available' END as current_status
-        FROM rooms r
-    )
+    $room_stmt = $pdo->prepare("
     SELECT 
         (SELECT COUNT(*) FROM rooms) as total_rooms,
-        (SELECT COUNT(*) FROM RoomStatus WHERE current_status = 'available') as available_rooms,
-        (SELECT COUNT(*) FROM RoomStatus WHERE current_status = 'occupied') as occupied_rooms
-    FROM dual");
+        (
+            SELECT COUNT(*) 
+            FROM rooms r 
+            WHERE NOT EXISTS (
+                SELECT 1 
+                FROM bookings b 
+                WHERE b.room_id = r.id 
+                AND b.status IN ('confirmed', 'checked_in')
+                AND NOW() BETWEEN b.check_in AND b.check_out
+            )
+        ) as available_rooms,
+        (
+            SELECT COUNT(*) 
+            FROM rooms r 
+            WHERE EXISTS (
+                SELECT 1 
+                FROM bookings b 
+                WHERE b.room_id = r.id 
+                AND b.status IN ('confirmed', 'checked_in')
+                AND NOW() BETWEEN b.check_in AND b.check_out
+            )
+        ) as occupied_rooms
+    FROM dual
+");
     $room_stmt->execute();
     $room_stats = $room_stmt->fetch(PDO::FETCH_ASSOC);
 
